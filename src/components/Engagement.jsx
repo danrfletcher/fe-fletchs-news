@@ -1,5 +1,7 @@
 import { ArrowUpCircleFill, ArrowDownCircleFill, ChatLeftDotsFill } from 'react-bootstrap-icons';
+import { useFocusedArticle } from '../contexts/FocusedArticle';
 import styled from 'styled-components';
+import { Votes } from './Votes';
 
 const EngagementBar = styled.section`
     display: flex;
@@ -10,21 +12,17 @@ const EngagementBar = styled.section`
         color: gray
     }
     `
-const Votes = styled.div`
-    display: flex;
-    align-items: center;
-    `
 const CommentCount = styled.div`
     display: flex;
     align-items: center;
 `
 
-export const Engagement = ({votes}) => {
+export const Engagement = () => {
+    const {article, setArticle } = useFocusedArticle();
+
     return (
         <EngagementBar>
-            <Votes>
-                <ArrowUpCircleFill />&nbsp;<ArrowDownCircleFill />&nbsp;&nbsp;{votes}&nbsp;&nbsp;
-            </Votes>
+            <Votes />
             <CommentCount>
                 <ChatLeftDotsFill />&nbsp; CommentCount
             </CommentCount>
