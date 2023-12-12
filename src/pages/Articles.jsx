@@ -8,7 +8,6 @@ export const Articles = () => {
         <>
             <Header />
             <main>
-                <ArticlesFilter />
                 <ArticleHighlights />
             </main>
             <Footer />
