@@ -4,6 +4,7 @@ import { Footer } from '../components/Footer';
 import { ArticleContent } from '../components/ArticleContent';
 import { Votes } from '../components/Votes';
 import { CommentsSection } from '../components/CommentsSection';
+import { FocusedArticleProvider } from '../contexts/FocusedArticle';
 
 export const Article = () => {
     let { articleId } = useParams();
@@ -11,14 +12,13 @@ export const Article = () => {
     articleId = articleId[articleId.length - 1]
 
     return (
-        <>
+        <FocusedArticleProvider>
             <Header />
             <main>
                 <ArticleContent articleId={articleId} />
-                <Votes />
                 <CommentsSection />
             </main>
             <Footer />
-        </>
+        </FocusedArticleProvider>
     )
 }
