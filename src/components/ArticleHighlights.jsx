@@ -3,10 +3,16 @@ import styled from 'styled-components';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { fetchArticles, fetchArticle } from '../utils/api';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const ArticleCard = styled(Card)`
     margin: 15px;
     border: none;
+    `
+
+const ReadMoreLink = styled(Link)`
+    text-decoration: none;
+    color: white;
     `
 
 export const ArticleHighlights = () => {
@@ -48,26 +54,33 @@ export const ArticleHighlights = () => {
         fetchData();
     }, [articles])
 
+    const removeSpecialCharacters = (urlString) => {
+        const regex = /[^\w\s-]/g;
+        return urlString.replace(regex, '');
+    }
+
     return (
         <section>
             {articles.map((article, index) => {
-                //console.log(articlePreviewText)
                 return (
-                    <ArticleCard className="bg-dark text-white" key={article.article_id}>
-                        <Card.Img src={article.article_img_url} alt="Card image" />
-                        <Card.ImgOverlay>
-                            <Card.Title>{article.title}</Card.Title>
-                            <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic.split("").slice(1,article.topic.length).join("")}`}</Card.Text>
-                            <Card.Text>
-                                <div>{articlePreviewText[article.article_id]}... </div>
-                                <div>
-                                    <br />
-                                    <ArrowRightCircleFill /> 
-                                    <strong> Read More</strong>
-                                </div>
-                            </Card.Text>
-                        </Card.ImgOverlay>
-                    </ArticleCard>
+                    <article>
+                        <ArticleCard className="bg-dark text-white" key={article.article_id}>
+                            <Card.Img src={article.article_img_url} alt="Card image" />
+                            <Card.ImgOverlay>
+                                <Card.Title>{article.title}</Card.Title>
+                                <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic.split("").slice(1,article.topic.length).join("")}`}</Card.Text>
+                                <Card.Text>
+                                    {articlePreviewText[article.article_id]}...
+                                        <br />
+                                        <br />
+                                    <ReadMoreLink to={`/articles/${removeSpecialCharacters(article.title.toLowerCase().split(" ").join("-"))}-${article.article_id}`}>
+                                        <ArrowRightCircleFill />
+                                        <strong> Read More</strong>
+                                    </ReadMoreLink>
+                                </Card.Text>
+                            </Card.ImgOverlay>
+                        </ArticleCard>
+                    </article>
                 )
             })}
         </section>
