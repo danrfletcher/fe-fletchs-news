@@ -1,10 +1,12 @@
 import './App.css'
+import { Routes, Route } from 'react-router-dom'
+import { Articles } from './pages/Articles'
 
 function App() {
   return (
-    <>
-    <p>Front End: Fletch's News</p>
-    </>
+    <Routes>
+      <Route path='/articles' element={<Articles />} />
+    </Routes>
   )
 }
 
