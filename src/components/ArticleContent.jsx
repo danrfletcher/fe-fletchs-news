@@ -6,6 +6,7 @@ import { Calendar, ChatLeftDotsFill, ArrowUpCircleFill, ArrowDownCircleFill } fr
 import {Image, Button } from 'react-bootstrap';
 import { SocialIcon } from 'react-social-icons'
 import { Engagement } from './Engagement';
+import { useFocusedArticle } from '../contexts/FocusedArticle';
 
 const ArticleTopic = styled.h6`
     font-weight: 100;
@@ -39,7 +40,7 @@ const ArticleBody = styled.p`
     `
 
 export const ArticleContent = ({articleId}) => {
-    const [article, setArticle] = useState({});
+    const {article, setArticle } = useFocusedArticle();
 
     useEffect(() => {
         const fetchData = async () => {
