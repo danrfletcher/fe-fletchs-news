@@ -1,5 +1,8 @@
 import Card from 'react-bootstrap/Card';
 import styled from 'styled-components';
+import { ArrowRightCircleFill } from 'react-bootstrap-icons';
+import { fetchArticles, fetchArticle } from '../utils/api';
+import { useEffect, useState } from 'react';
 
 const ArticleCard = styled(Card)`
     margin: 15px;
@@ -7,20 +10,66 @@ const ArticleCard = styled(Card)`
     `
 
 export const ArticleHighlights = () => {
+    const [articles, setArticles] = useState([]);
+    const [articlePreviewText, setArticlePreviewText] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await fetchArticles();
+                setArticles(data);
+            } catch(error) {
+                console.log("Error fetching articles", error);
+            }
+        }
+        fetchData();
+    }, [])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const newArticleIds = [];
+                const grabNewArticleIds = articles.map((article) => {
+                    newArticleIds.push(article.article_id);
+                });
+                const indArticleData = await Promise.all(newArticleIds.map((articleId) => {return fetchArticle(articleId);}));
+                setArticlePreviewText((prevState) => {
+                    const newState = { ...prevState};
+                    indArticleData.forEach((indArticle) => {
+                        const lastSpaceIndex = indArticle.body.lastIndexOf(" ", 100);
+                        newState[indArticle.article_id] = indArticle.body.substring(0,lastSpaceIndex);
+                    })
+                    return newState;
+                });
+            } catch {
+                console.log("Error fetching article info", error);
+            }
+        }
+        fetchData();
+    }, [articles])
+
     return (
         <section>
-            <ArticleCard className="bg-dark text-white">
-                <Card.Img src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" alt="Card image" />
-                <Card.ImgOverlay>
-                    <Card.Title>Card title</Card.Title>
-                    <Card.Text>
-                        This is a wider card with supporting text below as a natural lead-in
-                        to additional content. This content is a little bit longer.
-                    </Card.Text>
-                    <Card.Text>Last updated 3 mins ago</Card.Text>
-                </Card.ImgOverlay>
-            </ArticleCard>
-            <p>This will be the article highlights section.</p>
+            {articles.map((article, index) => {
+                //console.log(articlePreviewText)
+                return (
+                    <ArticleCard className="bg-dark text-white" key={article.article_id}>
+                        <Card.Img src={article.article_img_url} alt="Card image" />
+                        <Card.ImgOverlay>
+                            <Card.Title>{article.title}</Card.Title>
+                            <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic.split("").slice(1,article.topic.length).join("")}`}</Card.Text>
+                            <Card.Text>
+                                <div>{articlePreviewText[article.article_id]}... </div>
+                                <div>
+                                    <br />
+                                    <ArrowRightCircleFill /> 
+                                    <strong>Read More</strong>
+                                </div>
+                            </Card.Text>
+                        </Card.ImgOverlay>
+                    </ArticleCard>
+                )
+            })}
         </section>
     )
 }
