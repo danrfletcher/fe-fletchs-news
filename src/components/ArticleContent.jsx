@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchArticle } from '../utils/api';
+import { fetchArticle } from '../utils/articles-api';
 import styled from 'styled-components';
 import { Calendar, ChatLeftDotsFill, ArrowUpCircleFill, ArrowDownCircleFill } from 'react-bootstrap-icons';
 import {Image, Button } from 'react-bootstrap';

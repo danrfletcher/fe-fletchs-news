@@ -1,7 +1,7 @@
 import Card from 'react-bootstrap/Card';
 import styled from 'styled-components';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
-import { fetchArticles, fetchArticle } from '../utils/api';
+import { fetchArticles, fetchArticle } from '../utils/articles-api';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
