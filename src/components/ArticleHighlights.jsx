@@ -63,7 +63,7 @@ export const ArticleHighlights = () => {
                                 <div>
                                     <br />
                                     <ArrowRightCircleFill /> 
-                                    <strong>Read More</strong>
+                                    <strong> Read More</strong>
                                 </div>
                             </Card.Text>
                         </Card.ImgOverlay>
