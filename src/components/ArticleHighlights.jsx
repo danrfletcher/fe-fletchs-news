@@ -1,4 +1,5 @@
 import Card from 'react-bootstrap/Card';
+import Spinner from 'react-bootstrap/Spinner';
 import styled from 'styled-components';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
 import { fetchArticles, fetchArticle } from '../utils/articles-api';
@@ -9,10 +10,14 @@ const ArticleCard = styled(Card)`
     margin: 15px;
     border: none;
     `
-
 const ReadMoreLink = styled(Link)`
     text-decoration: none;
     color: white;
+    `
+const CenteredSpinner = styled(Spinner)`
+    position: absolute;
+    top: 50%;
+    left: 50%;
     `
 
 export const ArticleHighlights = () => {
@@ -61,28 +66,37 @@ export const ArticleHighlights = () => {
 
     return (
         <section>
-            {articles.map((article, index) => {
-                return (
-                    <article>
-                        <ArticleCard className="bg-dark text-white" key={article.article_id}>
-                            <Card.Img src={article.article_img_url} alt="Card image" />
-                            <Card.ImgOverlay>
-                                <Card.Title>{article.title}</Card.Title>
-                                <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic.split("").slice(1,article.topic.length).join("")}`}</Card.Text>
-                                <Card.Text>
-                                    {articlePreviewText[article.article_id]}...
-                                        <br />
-                                        <br />
-                                    <ReadMoreLink to={`/articles/${removeSpecialCharacters(article.title.toLowerCase().split(" ").join("-"))}-${article.article_id}`}>
-                                        <ArrowRightCircleFill />
-                                        <strong> Read More</strong>
-                                    </ReadMoreLink>
-                                </Card.Text>
-                            </Card.ImgOverlay>
-                        </ArticleCard>
-                    </article>
-                )
-            })}
+          {articles.length === 0 || Object.keys(articlePreviewText) === 0 ? (
+            <CenteredSpinner animation="grow" />
+          ) : (
+            articles.map((article, index) => (
+              <article key={article.article_id}>
+                <ArticleCard className="bg-dark text-white">
+                  <Card.Img src={article.article_img_url} alt="Card image" />
+                  <Card.ImgOverlay>
+                    <Card.Title>{article.title}</Card.Title>
+                    <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic
+                      .split("")
+                      .slice(1, article.topic.length)
+                      .join("")}`}</Card.Text>
+                    <Card.Text>
+                      {articlePreviewText[article.article_id] ? `${articlePreviewText[article.article_id]}...` : <Spinner animation="border" />}
+                      <br />
+                      <br />
+                      <ReadMoreLink
+                        to={`/articles/${removeSpecialCharacters(
+                          article.title.toLowerCase().split(" ").join("-")
+                        )}-${article.article_id}`}
+                      >
+                        <ArrowRightCircleFill />
+                        <strong> Read More</strong>
+                      </ReadMoreLink>
+                    </Card.Text>
+                  </Card.ImgOverlay>
+                </ArticleCard>
+              </article>
+            ))
+          )}
         </section>
-    )
+      );      
 }
