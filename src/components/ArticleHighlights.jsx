@@ -1,15 +1,30 @@
 import Card from 'react-bootstrap/Card';
+import Spinner from 'react-bootstrap/Spinner';
 import styled from 'styled-components';
 import { ArrowRightCircleFill } from 'react-bootstrap-icons';
-import { fetchArticles, fetchArticle } from '../utils/api';
+import { fetchArticles, fetchArticle } from '../utils/articles-api';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const ArticleCard = styled(Card)`
     margin: 15px;
     border: none;
     `
+const ReadMoreLink = styled(Link)`
+    text-decoration: none;
+    color: white;
+    `
+const CenteredSpinner = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
+    `
 
-export const ArticleHighlights = () => {
+export const ArticleHighlights = (props) => {
     const [articles, setArticles] = useState([]);
     const [articlePreviewText, setArticlePreviewText] = useState({});
 
@@ -18,6 +33,7 @@ export const ArticleHighlights = () => {
             try {
                 const data = await fetchArticles();
                 setArticles(data);
+                props.updateLoaded(true);
             } catch(error) {
                 console.log("Error fetching articles", error);
             }
@@ -48,28 +64,46 @@ export const ArticleHighlights = () => {
         fetchData();
     }, [articles])
 
+    const removeSpecialCharacters = (urlString) => {
+        const regex = /[^\w\s-]/g;
+        return urlString.replace(regex, '');
+    }
+
     return (
         <section>
-            {articles.map((article, index) => {
-                //console.log(articlePreviewText)
-                return (
-                    <ArticleCard className="bg-dark text-white" key={article.article_id}>
-                        <Card.Img src={article.article_img_url} alt="Card image" />
-                        <Card.ImgOverlay>
-                            <Card.Title>{article.title}</Card.Title>
-                            <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic.split("").slice(1,article.topic.length).join("")}`}</Card.Text>
-                            <Card.Text>
-                                <div>{articlePreviewText[article.article_id]}... </div>
-                                <div>
-                                    <br />
-                                    <ArrowRightCircleFill /> 
-                                    <strong> Read More</strong>
-                                </div>
-                            </Card.Text>
-                        </Card.ImgOverlay>
-                    </ArticleCard>
-                )
-            })}
+          {articles.length === 0 || Object.keys(articlePreviewText) === 0 ? (
+            <CenteredSpinner>
+              <Spinner animation="grow" />
+            </CenteredSpinner>
+          ) : (
+            articles.map((article, index) => (
+              <article key={article.article_id}>
+                <ArticleCard className="bg-dark text-white">
+                  <Card.Img src={article.article_img_url} alt="Card image" />
+                  <Card.ImgOverlay>
+                    <Card.Title>{article.title}</Card.Title>
+                    <Card.Text>{`${article.topic[0].toUpperCase()}${article.topic
+                      .split("")
+                      .slice(1, article.topic.length)
+                      .join("")}`}</Card.Text>
+                    <div>
+                      {articlePreviewText[article.article_id] ? `${articlePreviewText[article.article_id]}...` : <Spinner animation="border" />}
+                      <br />
+                      <br />
+                      <ReadMoreLink
+                        to={`/articles/${removeSpecialCharacters(
+                          article.title.toLowerCase().split(" ").join("-")
+                        )}-${article.article_id}`}
+                      >
+                        <ArrowRightCircleFill />
+                        <strong> Read More</strong>
+                      </ReadMoreLink>
+                    </div>
+                  </Card.ImgOverlay>
+                </ArticleCard>
+              </article>
+            ))
+          )}
         </section>
-    )
+      );      
 }
