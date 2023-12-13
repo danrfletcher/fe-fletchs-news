@@ -6,8 +6,8 @@ import { Article } from './pages/Article'
 function App() {
   return (
     <Routes>
-      <Route path='/articles' element={<Articles />} />
-      <Route path='/articles/:articleId' element={<Article />} />
+        <Route path='/articles' element={<Articles />} />
+        <Route path='/articles/:articleId' element={<Article />} />
     </Routes>
   )
 }

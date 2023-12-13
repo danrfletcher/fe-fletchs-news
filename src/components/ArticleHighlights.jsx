@@ -14,13 +14,17 @@ const ReadMoreLink = styled(Link)`
     text-decoration: none;
     color: white;
     `
-const CenteredSpinner = styled(Spinner)`
+const CenteredSpinner = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
     `
 
-export const ArticleHighlights = () => {
+export const ArticleHighlights = (props) => {
     const [articles, setArticles] = useState([]);
     const [articlePreviewText, setArticlePreviewText] = useState({});
 
@@ -29,6 +33,7 @@ export const ArticleHighlights = () => {
             try {
                 const data = await fetchArticles();
                 setArticles(data);
+                props.updateLoaded(true);
             } catch(error) {
                 console.log("Error fetching articles", error);
             }
@@ -67,7 +72,9 @@ export const ArticleHighlights = () => {
     return (
         <section>
           {articles.length === 0 || Object.keys(articlePreviewText) === 0 ? (
-            <CenteredSpinner animation="grow" />
+            <CenteredSpinner>
+              <Spinner animation="grow" />
+            </CenteredSpinner>
           ) : (
             articles.map((article, index) => (
               <article key={article.article_id}>
@@ -79,7 +86,7 @@ export const ArticleHighlights = () => {
                       .split("")
                       .slice(1, article.topic.length)
                       .join("")}`}</Card.Text>
-                    <Card.Text>
+                    <div>
                       {articlePreviewText[article.article_id] ? `${articlePreviewText[article.article_id]}...` : <Spinner animation="border" />}
                       <br />
                       <br />
@@ -91,7 +98,7 @@ export const ArticleHighlights = () => {
                         <ArrowRightCircleFill />
                         <strong> Read More</strong>
                       </ReadMoreLink>
-                    </Card.Text>
+                    </div>
                   </Card.ImgOverlay>
                 </ArticleCard>
               </article>
