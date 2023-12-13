@@ -22,7 +22,7 @@ export const Engagement = () => {
 
     return (
         <EngagementBar>
-            <Votes />
+            <Votes votes={article.votes} />
             <CommentCount>
                 <ChatLeftDotsFill />&nbsp; CommentCount
             </CommentCount>
