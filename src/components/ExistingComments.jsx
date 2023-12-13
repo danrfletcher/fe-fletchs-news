@@ -17,7 +17,7 @@ const StyledSpinner = styled.div`
 export const ExistingComments = () => {
     const {article} = useFocusedArticle();
     const [comments, setComments] = useState([]);
-    /*
+
     useEffect(() => {
         if (article.article_id) {
             const fetchData = async () => {
@@ -31,7 +31,6 @@ export const ExistingComments = () => {
             fetchData();
         }
     },[article]);
-    */
 
     const transformCommentPostTime = (createdAt) => {
         const differenceInDays = Math.floor((new Date() - new Date(createdAt)) / (1000 * 60 * 60 * 24))
