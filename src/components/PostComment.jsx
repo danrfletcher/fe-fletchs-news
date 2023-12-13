@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Image, Form, Button } from 'react-bootstrap';
+import { Image, Button } from 'react-bootstrap';
 import AvatarImage from '../assets/avatar-placeholder.svg'
 import styled from 'styled-components';
 
 const StyledAvatarImage = styled(Image)`
     height: 2rem;
     width: 2rem;
+    border: 1px solid lightgrey;
     ` 
 const FormWrap = styled.form`
     position: relative;
@@ -37,7 +38,7 @@ const FormLabel = styled.label`
     `
 const CommentBox = styled.section`
     display: flex;
-    margin: 35px 10px 0px 10px
+    margin: 35px 10px 35px 10px
     `
 const CommentControls = styled.div`
     display: flex;
