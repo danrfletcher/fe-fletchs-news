@@ -5,6 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import styled from "styled-components";
 import { FooterBar } from "../components/FooterBar";
+import { useEffect, useState } from "react";
 
 const StyledMain = styled.main`
     position: absolute;
@@ -25,6 +26,44 @@ const StyledFooter = styled.footer`
     `
 
 export const Login = () => {
+    const [usernameEntered, setUsernameEntered] = useState(false);
+    const [passwordEntered, setPasswordEntered] = useState(false);
+    const [flagUsername, setFlagUsername] = useState(false);
+    const [flagPassword, setFlagPassword] = useState(false);
+    const [username, setUsername] = useState("");
+    
+    const regex = /.+/
+    const handleSignIn = (event) => {
+        event.preventDefault();
+        if (!usernameEntered) {
+            setFlagUsername(true);
+        } if (!passwordEntered) {
+            setFlagPassword(true)
+        } else {
+            setPasswordEntered()
+        }
+    }
+    
+    const updateUsername = (event) => {
+        setUsername(event.target.value);
+        if (event.target.value.length > 0) {
+            setFlagUsername(false);
+            setUsernameEntered(true)
+        }
+        else {
+            setUsernameEntered(false)
+        }
+    }
+
+    const updatePasswordEntered = (event) => {
+        if (event.target.value.length > 0) {
+            setFlagPassword(false)
+            setPasswordEntered(true)
+        } else {
+            setPasswordEntered(false);
+        };
+    }
+
     return (
         <>
             <Header />
@@ -45,14 +84,25 @@ export const Login = () => {
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Label>Username</Form.Label>
-                                <Form.Control type="email" placeholder="Enter username" />
+                                <Form.Control 
+                                    id={flagUsername ? 'invalid-form' : null}
+                                    type="text" 
+                                    placeholder="Enter username"
+                                    value={username}
+                                    onChange={updateUsername}
+                                    />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Group className="mb-3">
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Control
+                                    type="password" 
+                                    placeholder="Password"
+                                    onChange={updatePasswordEntered}
+                                    id={flagPassword ? 'invalid-form' : null}
+                                    />
                             </Form.Group>
                             </Form>
-                            <Button variant="primary" type="submit">Sign In</Button>
+                            <Button onClick={handleSignIn} variant="primary" type="submit">Sign In</Button>
                         </Card.Body>
                     </StyledCard>
                 </StyledMain>
