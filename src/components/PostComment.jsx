@@ -103,12 +103,10 @@ export const PostComment = () => {
     }
 
     const handlePostComment = (event) => {
-        console.log("HERE")
         console.log(user)
         event.preventDefault();
         if (!user) {
-            console.log("here")
-            navigate('../../log-in')
+            navigate('../../login')
         }
 
         setInput("");
