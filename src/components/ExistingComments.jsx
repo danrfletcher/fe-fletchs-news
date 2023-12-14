@@ -7,6 +7,7 @@ import { Image } from 'react-bootstrap';
 import AvatarImage from '../assets/avatar-placeholder.svg'
 import { fetchUsers } from "../utils/users-api";
 import { Votes } from "./Votes";
+import { useFocusedComments } from "../contexts/FocusedComments";
 
 const StyledSpinner = styled.div`
     display: flex;
@@ -54,7 +55,7 @@ const VoteCount = styled.div`
 
 export const ExistingComments = () => {
     const {article} = useFocusedArticle();
-    const [comments, setComments] = useState([]);
+    const {comments, setComments} = useFocusedComments();
     const [userAvatars, setUserAvatars] = useState({});
 
     useEffect(() => {
@@ -73,22 +74,25 @@ export const ExistingComments = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const newUserIds = [];
-                const grabNewUserIds = comments.map((comment) => {
-                    newUserIds.push(comment.author);
-                });
-                const userProfiles = await Promise.all(newUserIds.map((user) => {return fetchUsers(user);}));
-                setUserAvatars((prevState) => {
-                    const newState = {...prevState};
-                    userProfiles.forEach((profile) => {
-                        newState[profile.username] = profile.avatar_url;
+            if (comments.length > 0) {
+                try {
+                    const newUserIds = [];
+                    const grabNewUserIds = comments.map((comment) => {
+                        newUserIds.push(comment.author);
+                    });
+                    const userProfiles = await Promise.all(newUserIds.map((user) => {return fetchUsers(user);}));
+                    setUserAvatars((prevState) => {
+                        const newState = {...prevState};
+                        userProfiles.forEach((profile) => {
+                            newState[profile.username] = profile.avatar_url;
+                        })
+                        return newState;
                     })
-                    return newState;
-                })
-            } catch {
-                console.log("Error fetching user data", error);
+                } catch (error) {
+                    console.log("Error fetching user data: ", error);
+                }
             }
+
         }
         fetchData();
     }, [comments])

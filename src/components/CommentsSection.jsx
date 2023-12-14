@@ -1,11 +1,14 @@
+import { FocusedCommentsProvider } from "../contexts/FocusedComments"
 import { ExistingComments } from "./ExistingComments"
 import { PostComment } from "./PostComment"
 
 export const CommentsSection = () => {
     return (
         <section>
-            <PostComment />
-            <ExistingComments />
+            <FocusedCommentsProvider>
+                <PostComment />
+                <ExistingComments />
+            </FocusedCommentsProvider>
         </section>
     )
 }
