@@ -103,9 +103,9 @@ export const PostComment = () => {
     }
 
     const handlePostComment = (event) => {
-        console.log(user)
+        console.log(user, "<<<USER")
         event.preventDefault();
-        if (!user) {
+        if (Object.keys(user).length === 0) {
             navigate('../../login')
         }
 
