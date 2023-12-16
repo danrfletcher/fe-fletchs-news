@@ -10,3 +10,12 @@ export const fetchUsers = async (username) => {
         return error
     }
 }
+
+export const login = async (username, password) => {
+    try {
+        const success = await axios.post(`${baseURL}/api/users/login`, {username: username, password: password})
+        return success.data.accessToken
+    } catch (error) {
+        return error
+    }
+}
