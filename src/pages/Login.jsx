@@ -8,7 +8,8 @@ import { FooterBar } from "../components/FooterBar";
 import { useEffect, useState } from "react";
 import { useLoggedInUser } from "../contexts/LoggedInUser";
 import { login } from "../utils/users-api";
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+import { useNavigationHistory } from "../contexts/NavigationHistory";
 
 const StyledMain = styled.main`
     position: absolute;
@@ -33,6 +34,9 @@ const BadLogin = styled(Card.Text)`
 
 export const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const {page} = useNavigationHistory();
+
     const {user, setUser} = useLoggedInUser();
 
     const [usernameEntered, setUsernameEntered] = useState(false);
@@ -62,7 +66,11 @@ export const Login = () => {
                     setFailedLogin(true)
                 } else if (typeof token === 'string') {
                     await setUser({username: username, accessToken: token})
-                    navigate('/login/success')
+                    if (page.length > 1) {
+                        navigate(-1)
+                    } else {
+                        navigate('/')
+                    }
                 } else {
                     const error = new Error('Login failed');
                     error.statusCode = token.response.status;
