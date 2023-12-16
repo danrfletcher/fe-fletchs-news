@@ -6,6 +6,9 @@ import Form from 'react-bootstrap/Form';
 import styled from "styled-components";
 import { FooterBar } from "../components/FooterBar";
 import { useEffect, useState } from "react";
+import { useLoggedInUser } from "../contexts/LoggedInUser";
+import { login } from "../utils/users-api";
+import { useNavigate } from 'react-router';
 
 const StyledMain = styled.main`
     position: absolute;
@@ -24,23 +27,51 @@ const StyledFooter = styled.footer`
     top: 100%;
     transform: translateY(-10px);
     `
+const BadLogin = styled(Card.Text)`
+    color: #FF8080
+    `
 
 export const Login = () => {
+    const navigate = useNavigate();
+    const {user, setUser} = useLoggedInUser();
+
     const [usernameEntered, setUsernameEntered] = useState(false);
     const [passwordEntered, setPasswordEntered] = useState(false);
+
     const [flagUsername, setFlagUsername] = useState(false);
     const [flagPassword, setFlagPassword] = useState(false);
+    const [failedLogin, setFailedLogin] = useState(false);
+
     const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     
-    const regex = /.+/
-    const handleSignIn = (event) => {
+    const handleSignIn = async (event) => {
         event.preventDefault();
         if (!usernameEntered) {
-            setFlagUsername(true);
-        } if (!passwordEntered) {
+            setFlagUsername(true); 
+        }
+        if (!passwordEntered) {
             setFlagPassword(true)
-        } else {
-            setPasswordEntered()
+        }
+        else {
+            try {
+                const token = await login(username, password)
+
+                await setUser({username: username, accessToken: token})
+                if (token?.response?.status === 401) {
+                    setFailedLogin(true)
+                } else if (typeof token === 'string') {
+                    await setUser({username: username, accessToken: token})
+                    navigate('/login/success')
+                } else {
+                    const error = new Error('Login failed');
+                    error.statusCode = token.response.status;
+                    error.statusText = token.response.statusText;
+                    throw error;
+                }
+            } catch (error) {
+                navigate(`/error/${error.statusCode}`, { state: { statusText: error.statusText || 'Error occurred' }});
+            }
         }
     }
     
@@ -48,20 +79,22 @@ export const Login = () => {
         setUsername(event.target.value);
         if (event.target.value.length > 0) {
             setFlagUsername(false);
-            setUsernameEntered(true)
+            setUsernameEntered(true);
         }
         else {
             setUsernameEntered(false)
         }
     }
 
-    const updatePasswordEntered = (event) => {
+    const updatePassword = (event) => {
+        setPassword(event.target.value);
         if (event.target.value.length > 0) {
-            setFlagPassword(false)
-            setPasswordEntered(true)
-        } else {
-            setPasswordEntered(false);
-        };
+            setFlagPassword(false);
+            setPasswordEntered(true);
+        }
+        else {
+            setPasswordEntered(false)
+        }
     }
 
     return (
@@ -97,11 +130,17 @@ export const Login = () => {
                                 <Form.Control
                                     type="password" 
                                     placeholder="Password"
-                                    onChange={updatePasswordEntered}
+                                    value={password}
+                                    onChange={updatePassword}
                                     id={flagPassword ? 'invalid-form' : null}
                                     />
                             </Form.Group>
                             </Form>
+                            {failedLogin ? (
+                            <BadLogin>
+                                Username or password is incorrect.
+                            </BadLogin>
+                            ) : (null)}
                             <Button onClick={handleSignIn} variant="primary" type="submit">Sign In</Button>
                         </Card.Body>
                     </StyledCard>
