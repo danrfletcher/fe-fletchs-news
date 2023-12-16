@@ -9,7 +9,6 @@ export const NavigationHistoryProvider = ({children}) => {
 
     useEffect(() => {
         setPage(prev => [...prev, location.pathname])
-        console.log(page)
     },[location]);
     return (
         <NavigationHistory.Provider value={{page, setPage}}>
