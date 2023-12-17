@@ -26,6 +26,14 @@ export const LoggedInUserProvider = ({children}) => {
     useEffect(() => {
             checkLogin()
     },[]);
+
+    useEffect(() => {
+        if (typeof user !== 'undefined') {
+            if (typeof user.accessToken === 'object') {
+                setUser({})
+            }
+        }
+    },[user])
     
     return (
         <LoggedInUser.Provider value={{user, setUser}}>

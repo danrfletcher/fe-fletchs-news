@@ -61,6 +61,12 @@ export const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     
+    useEffect(() => {
+        if (Object.keys(user).length > 0) {
+            navigate('/')
+        } 
+    }, [user]);
+
     const handleSignIn = async (event) => {
         event.preventDefault();
         if (!usernameEntered) {

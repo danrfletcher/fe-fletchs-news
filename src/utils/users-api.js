@@ -15,7 +15,6 @@ export const fetchUsers = async (username) => {
 export const login = async (username, password) => {
     try {
         const success = await axios.post(`${baseURL}/api/users/login`, {username: username, password: password})
-        console.log("⚡ ~ success.data.refreshToken:", success.data.refreshToken)
 
         const env = import.meta.env.CLIENT_ENV
         Cookie.set('refreshToken', success.data.refreshToken, {
@@ -25,6 +24,19 @@ export const login = async (username, password) => {
         });
 
         return success.data.accessToken
+    } catch (error) {
+        return error
+    }
+}
+
+export const signOut = async (token) => {
+    try {
+        const success = await axios.delete(`${baseURL}/api/users/logout`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        Cookie.set('refreshToken', null);
     } catch (error) {
         return error
     }
