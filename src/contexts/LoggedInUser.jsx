@@ -13,7 +13,7 @@ export const LoggedInUserProvider = ({children}) => {
             if (accessToken) {
                 const userProfile = await getProfileFromToken(accessToken);
                 if (userProfile) {
-                    setUser({username: userProfile.username, accessToken: accessToken});
+                    setUser({username: userProfile.username, accessToken: accessToken, avatar: userProfile.avatar_url});
                 }
             } else {
                 console.log("No access token found")
