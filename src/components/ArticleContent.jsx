@@ -5,6 +5,7 @@ import { SocialIcon } from 'react-social-icons'
 import { Engagement } from './Engagement';
 import { useFocusedArticle } from '../contexts/FocusedArticle';
 import Spinner from 'react-bootstrap/Spinner';
+import { device } from '../styles/media-queries';
 
 const ArticleTopic = styled.h6`
     font-weight: 100;
@@ -23,12 +24,13 @@ const SocialIconsContainer = styled.div`
     `
 const StatusBar = styled.div`
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
     padding-right: 10px;
     padding-left: 10px;
     padding-bottom: 10px;
     padding-top: 5px;
+    margin-right: 30px;
     `
 const TitleArea = styled.div`
     margin: 10px;

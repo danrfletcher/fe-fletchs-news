@@ -8,6 +8,7 @@ import { useFocusedArticle } from '../contexts/FocusedArticle';
 import styled from 'styled-components';
 import Spinner from 'react-bootstrap/Spinner';
 import { fetchArticle } from '../utils/articles-api';
+import { device } from "../styles/media-queries";
 
 const CenteredSpinner = styled.div`
     display: flex;
@@ -17,6 +18,20 @@ const CenteredSpinner = styled.div`
     height: 100vh;
     width: 100vw;
     z-index: 1;
+    `
+const ArticleContainer = styled.div`
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    `
+const ArticleSection = styled.div`
+    max-width: 100vw;
+    @media ${device.small} {
+        width: 100vw;
+    }
+    @media ${device.large} {
+        max-width: 1000px;
+    }
     `
 
 export const Article = () => {
@@ -67,13 +82,14 @@ export const Article = () => {
         <>
             <Header />
             {article.article_id ? (
-                <>
-                    <main>
-                        <ArticleContent articleId={articleId} />
-                        <CommentsSection />
-                    </main>
-                    <Footer />
-                </>
+                <ArticleContainer>
+                    <ArticleSection>
+                        <main>
+                            <ArticleContent articleId={articleId} />
+                            <CommentsSection />
+                        </main>
+                    </ArticleSection>
+                </ArticleContainer>
             ) : (
             <CenteredSpinner>
                 <Spinner animation="grow" />

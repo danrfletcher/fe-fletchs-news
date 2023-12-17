@@ -10,18 +10,30 @@ import { useLoggedInUser } from "../contexts/LoggedInUser";
 import { login } from "../utils/users-api";
 import { useNavigate, useLocation } from 'react-router';
 import { useNavigationHistory } from "../contexts/NavigationHistory";
+import { device } from "../styles/media-queries";
 
 const StyledMain = styled.main`
     position: absolute;
     height: 90vh;
     width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     `
 const FormWrap = styled.div`
     `
 const StyledCard = styled(Card)`
-    margin: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+min-width: 90vw;
+max-width: 1000px;
+    @media ${device.medium} {
+        min-width: 80vw;
+    }
+    @media ${device.large} {
+        min-width: 40vw;
+    }
+    @media ${device.xl} {
+        min-width: 30vw;
+    }
     `
 const StyledFooter = styled.footer`
     position: absolute;
