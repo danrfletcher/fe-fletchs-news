@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { useLoggedInUser } from '../contexts/LoggedInUser';
 import { useFocusedComments } from '../contexts/FocusedComments';
 import { useNavigate } from 'react-router';
+import { postComment } from '../utils/comments-api';
+import { useFocusedArticle } from '../contexts/FocusedArticle';
 
 const StyledAvatarImage = styled(Image)`
     height: 2rem;
@@ -73,6 +75,7 @@ export const PostComment = () => {
     const {comments, setComments} = useFocusedComments();
     const {user} = useLoggedInUser();
     const navigate = useNavigate();
+    const {article} = useFocusedArticle();
 
     //Form validation regex
     const regex = /[\w\d!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{1,}/i;
@@ -103,14 +106,19 @@ export const PostComment = () => {
     }
 
     const handlePostComment = (event) => {
-        console.log(user, "<<<USER")
         event.preventDefault();
         if (Object.keys(user).length === 0) {
             navigate('../../login')
+        } else {
+            setComments((prev) => [{
+                author: user.username,
+                body: input,
+                votes: 0
+            }, ...prev])
+            setFormFocus(false)
+            postComment(article.article_id, input, user.username, user.accessToken)
         }
-
         setInput("");
-        //API call
     };
     
     const handleCancel = () => {
@@ -120,7 +128,7 @@ export const PostComment = () => {
 
     return (
         <CommentBox>
-            <StyledAvatarImage src={AvatarImage} roundedCircle />
+            <StyledAvatarImage src={user.avatar ? user.avatar : AvatarImage} roundedCircle />
             <FormWrap onFocus={handleFocus}>
                 <CommentInput
                     type="text" id="comment" 
