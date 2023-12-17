@@ -13,7 +13,6 @@ export const Articles = () => {
             <main>
                 <ArticleHighlights updateLoaded={setArticlesLoaded} />
             </main>
-            {articlesLoaded ? (<Footer />) : null}
         </>
     )
 }

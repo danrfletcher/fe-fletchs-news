@@ -10,3 +10,22 @@ export const fetchComments = async (articleId) => {
         return error
     }
 }
+
+export const postComment = async (articleId, comment, username, token) => {
+    try {
+        console.log("HERE")
+        console.log(`${baseURL}/api/articles/${articleId}/comments`)
+        const postComment = await axios.post(`${baseURL}/api/articles/${articleId}/comments`, {
+            body: comment,
+            author: username
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
+        })
+        return postComment;
+    } catch (error) {
+        return error
+    }
+}

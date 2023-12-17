@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { Image, Button } from 'react-bootstrap';
 import AvatarImage from '../assets/avatar-placeholder.svg'
 import styled from 'styled-components';
+import { useLoggedInUser } from '../contexts/LoggedInUser';
+import { useFocusedComments } from '../contexts/FocusedComments';
+import { useNavigate } from 'react-router';
+import { postComment } from '../utils/comments-api';
+import { useFocusedArticle } from '../contexts/FocusedArticle';
 
 const StyledAvatarImage = styled(Image)`
     height: 2rem;
@@ -26,7 +31,7 @@ const CommentInput = styled.input`
         top: -24px;
     }
     `
-const FormLabel = styled.label`
+const FormLabel = styled(({userInput, ...restOfProps}) => (<label {...restOfProps} />))`
     position: absolute;
     margin-left: 10px;
     top: 0;
@@ -34,23 +39,28 @@ const FormLabel = styled.label`
     color: #d3d3d3;
     transition: 0.2s all;
     cursor: text;
+    font-size: ${(props) => (props.userInput ? '0.75rem' : null)};
+    top: ${(props) => (props.userInput ? '-24px' : null)};
     }
     `
 const CommentBox = styled.section`
     display: flex;
     margin: 35px 10px 35px 10px
     `
+const StyledButton = styled(Button)`
+    `
 const CommentControls = styled.div`
     display: flex;
     width: 100%;
     justify-content: right;
-    & > ${Button}:first-child {
+    margin-top: 5px;
+    & > ${StyledButton}:first-child {
         margin-right: 10px;
     }
-    & > ${Button} * {
+    & > ${StyledButton} * {
         margin-top: 5px;
     }
-    & > ${Button}:last-child {
+    & > ${StyledButton}:last-child {
         margin-right: -10px;
     }
     `
@@ -62,6 +72,10 @@ export const PostComment = () => {
     const [formFocus, setFormFocus] = useState(false);
     const [valid, setValid] = useState(false);
     const formRef = useRef();
+    const {comments, setComments} = useFocusedComments();
+    const {user} = useLoggedInUser();
+    const navigate = useNavigate();
+    const {article} = useFocusedArticle();
 
     //Form validation regex
     const regex = /[\w\d!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]{1,}/i;
@@ -71,9 +85,10 @@ export const PostComment = () => {
         setFormFocus(true)
     };
     const handleBlur = () => {
-        setInput("")
-        setValid(false)
-        setFormFocus(false)
+        if (input === "") {
+            setValid(false)
+            setFormFocus(false)
+        }
     };
 
     //Update state when form is valid/invalid
@@ -90,29 +105,44 @@ export const PostComment = () => {
         if (!valid) setValid(true)
     }
 
-    const handleSubmit = (event) => {
+    const handlePostComment = (event) => {
         event.preventDefault();
-        //Optimistic render
+        if (Object.keys(user).length === 0) {
+            navigate('../../login')
+        } else {
+            setComments((prev) => [{
+                author: user.username,
+                body: input,
+                votes: 0
+            }, ...prev])
+            setFormFocus(false)
+            postComment(article.article_id, input, user.username, user.accessToken)
+        }
         setInput("");
-        //API call
     };
     
+    const handleCancel = () => {
+        setInput("")
+        setFormFocus(false);
+    }
+
     return (
         <CommentBox>
-            <StyledAvatarImage src={AvatarImage} roundedCircle />
-            <FormWrap onFocus={handleFocus} onBlur={handleBlur}>
+            <StyledAvatarImage src={user.avatar ? user.avatar : AvatarImage} roundedCircle />
+            <FormWrap onFocus={handleFocus}>
                 <CommentInput
                     type="text" id="comment" 
                     onChange={updateInput} 
                     required  
                     value={input}
                     pattern={regex}
+                    onBlur={handleBlur}
                 />
-                <FormLabel htmlFor="comment">Add a comment...</FormLabel>
+                <FormLabel userInput={input === "" ? false : true} htmlFor="comment">Add a comment...</FormLabel>
                 {formFocus ? (
                 <CommentControls>
-                    {valid ? (<Button variant="success">Comment</Button>) : null}
-                    <Button variant="danger">Cancel</Button>
+                    {valid ? (<StyledButton onClick={handlePostComment} variant="success">Comment</StyledButton>) : null}
+                    <StyledButton onClick={handleCancel} variant="danger">Cancel</StyledButton>
                 </CommentControls>
             ) : null}
             </FormWrap>

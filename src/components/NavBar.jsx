@@ -9,6 +9,7 @@ const Nav = styled.nav`
     justify-content: space-between;
     padding: 5px 15px;
     align-items: center;
+    max-height: 50px;
     `
 const LogoAndCategories = styled.div``
 
@@ -21,7 +22,7 @@ const MenuIcons = styled.div`
     `
 
 const Logo = styled.img`
-    max-width: 30vw
+    max-height: 40px;
     `
 
 export const NavBar = () => {
