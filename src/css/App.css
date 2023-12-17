@@ -6,3 +6,20 @@
     box-shadow: 0 0 0 0.2rem rgba(255, 128, 128, 0.25);
     border: 1px solid #FF8080;
 }
+
+#styled-accordian,#styled-accordian > *,.accordion-button:not(.collapsed) {
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.accordion-button {
+    margin-left: -15px;
+    padding: 0px !important;
+}
+
+#styled-accordian > h4 {
+    margin-left: 15px !important;
+    padding: 15px !important;
+}
