@@ -26,48 +26,11 @@ const CenteredSpinner = styled.div`
 const AllArticlesText = styled.h2`
     margin: 25px 15px 5px 15px;
     `
-const FilterButton = styled.h4`
-    margin-left: 15px;
-    `
 
 export const Home = () => {
+    const [articlesLoaded, setArticlesLoaded] = useState(false);
     const [articles, setArticles] = useState([]);
     const [articlePreviewText, setArticlePreviewText] = useState({});
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await fetchArticles();
-                setArticles(data);
-            } catch(error) {
-                console.log("Error fetching articles", error);
-            }
-        }
-        fetchData();
-    }, [])
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const newArticleIds = [];
-                const grabNewArticleIds = articles.map((article) => {
-                    newArticleIds.push(article.article_id);
-                });
-                const indArticleData = await Promise.all(newArticleIds.map((articleId) => {return fetchArticle(articleId);}));
-                setArticlePreviewText((prevState) => {
-                    const newState = { ...prevState};
-                    indArticleData.forEach((indArticle) => {
-                        const lastSpaceIndex = indArticle.body.lastIndexOf(" ", 100);
-                        newState[indArticle.article_id] = indArticle.body.substring(0,lastSpaceIndex);
-                    })
-                    return newState;
-                });
-            } catch (error) {
-                console.log("Error fetching article info", error);
-            }
-        }
-        fetchData();
-    }, [articles])
 
     const removeSpecialCharacters = (urlString) => {
         const regex = /[^\w\s-]/g;
@@ -77,10 +40,8 @@ export const Home = () => {
     return (
         <>
             <Header />
-            {articles.length === 0 || Object.keys(articlePreviewText) === 0 ? (
-                <CenteredSpinner>
-                    <Spinner animation="grow" />
-                </CenteredSpinner>
+            {!articlesLoaded ? (
+                <ArticleHighlights updateLoaded={setArticlesLoaded} updateArticles={setArticles}/>
             ) : (
                 <>
                     <Carousel>
@@ -103,8 +64,7 @@ export const Home = () => {
                     ))}
                     </Carousel>
                     <AllArticlesText>All Articles</AllArticlesText>
-                    <FilterButton>Filter</FilterButton>
-                    <ArticleHighlights />
+                    <ArticleHighlights updateLoaded={setArticlesLoaded} updateArticles={setArticles} updateArticlePreviewText={setArticlePreviewText}/>
                     <Footer />
                 </>
             )}
